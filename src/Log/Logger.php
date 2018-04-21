@@ -24,6 +24,16 @@ class Logger {
 		'logPath' =>  "/tmp/logs/",
 		'logFileExtension' => '.log',
 		'delayThreshold' => 100, // log buffer threshold
+		// 用于输出日志的附加信息   ---start
+		'extra' => [
+			'REQUEST_URI'    => 'A',
+			'REMOTE_ADDR'    => 'B',
+			'REQUEST_METHOD' => 'C',
+			'HTTP_REFERER'   => 'D',
+			'SERVER_NAME'    => 'F',
+			'UNIQUE_ID'      => 'G',
+		],
+		// 用户输出日志的附加信息 ---start
 	];
 
 	/**
@@ -92,14 +102,7 @@ class Logger {
 		$formatter = self::getJsonFormatter();
 
 		// 日志的附加信息，用于追踪和表明请求来源等等
-		$server = array(
-			'REQUEST_URI'    => 'A',
-			'REMOTE_ADDR'    => 'B',
-			'REQUEST_METHOD' => 'C',
-			'HTTP_REFERER'   => 'D',
-			'SERVER_NAME'    => 'F',
-			'UNIQUE_ID'      => 'G',
-		);
+		$server = self::$logConfig['extra'];
 		$processor = new \Monolog\Processor\WebProcessor($server);
 
 		// Create some handlers
