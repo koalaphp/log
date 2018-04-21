@@ -1,0 +1,2 @@
+# log
+Logger of KoalaPHP

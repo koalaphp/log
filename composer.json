@@ -1,0 +1,28 @@
+{
+  "name": "koala/log",
+  "description": "based on monolog, save log to files with high performance",
+  "keywords": ["log", "logging", "psr-4", "files"],
+  "homepage": "https://my.oschina.net/laiconglin/blog",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+	{
+	  "name": "laiconglin",
+	  "email": "laiconglin3@126.com",
+	  "homepage": "https://my.oschina.net/laiconglin/blog"
+	}
+  ],
+  "repositories": {
+	"packagist": {
+	  "type":"composer",
+	  "url":"https://packagist.phpcomposer.com"
+	}
+  },
+  "require": {
+	"php": ">=7.0.0",
+	"monolog/monolog" : "v1.22.1"
+  },
+  "autoload": {
+	"psr-4": {"Koala\\Log\\": "src/Log"}
+  }
+}
