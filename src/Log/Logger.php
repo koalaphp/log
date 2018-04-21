@@ -16,6 +16,8 @@ class Logger {
 
 	private static $lineFormatter = null;
 
+	private static $jsonFormatter = null;
+
 	// 默认的日志的配置
 	protected static $defaultConfig = [
 		'level' => \Monolog\Logger::INFO,
@@ -34,7 +36,7 @@ class Logger {
 		}
 		if (empty($logConfig)) {
 			// 采用默认的配置
-			self::$defaultConfig['logPath'] = sys_get_temp_dir() . DS . '' . DS;
+			self::$defaultConfig['logPath'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR;
 			self::$logConfig = self::$defaultConfig;
 		} else {
 			// 加上默认的配置，防止配置出错
@@ -60,6 +62,15 @@ class Logger {
 		return self::$lineFormatter;
 	}
 
+
+	protected static function getJsonFormatter() {
+		if (self::$jsonFormatter !== null) {
+			return self::$jsonFormatter;
+		}
+		self::$jsonFormatter = new \Monolog\Formatter\JsonFormatter();
+		return self::$jsonFormatter;
+	}
+
 	/**
 	 * @param string $loggerName
 	 * @return \Monolog\Logger
@@ -77,15 +88,28 @@ class Logger {
 			return self::$loggerMap[$loggerName];
 		}
 
-		$formatter = self::getLineFormatter();
+		// 采用Json的格式化输出
+		$formatter = self::getJsonFormatter();
+
+		// 日志的附加信息，用于追踪和表明请求来源等等
+		$server = array(
+			'REQUEST_URI'    => 'A',
+			'REMOTE_ADDR'    => 'B',
+			'REQUEST_METHOD' => 'C',
+			'HTTP_REFERER'   => 'D',
+			'SERVER_NAME'    => 'F',
+			'UNIQUE_ID'      => 'G',
+		);
+		$processor = new \Monolog\Processor\WebProcessor($server);
 
 		// Create some handlers
-		$logFilePath = sprintf("%s%s-%s%s", self::$logConfig['logPath'] , $loggerName, CUR_DAY, self::$logConfig['logFileExtension']);
+		$logFilePath = sprintf("%s%s-%s%s", self::$logConfig['logPath'] , $loggerName, date("Y-m-d"), self::$logConfig['logFileExtension']);
 
 		$logLevel = self::$logConfig['level'];
 		$delayThreshold = intval(self::$logConfig['delayThreshold']);
 		$fileStream = new StreamHandler($logFilePath, $logLevel, true, $delayThreshold);
 		$fileStream->setFormatter($formatter);
+		$fileStream->pushProcessor($processor);
 
 		$tmpLogger = new \Monolog\Logger($loggerName);
 		$tmpLogger->pushHandler($fileStream);
