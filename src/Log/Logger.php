@@ -7,16 +7,14 @@
  */
 namespace Koala\Log;
 
-use Monolog\Formatter\LineFormatter;
-
 class Logger {
-	private static $loggerMap = [];
+	protected static $loggerMap = [];
 
-	private static $logConfig = [];
+	protected static $logConfig = [];
 
-	private static $lineFormatter = null;
+	protected static $lineFormatter = null;
 
-	private static $jsonFormatter = null;
+	protected static $jsonFormatter = null;
 
 	// 默认的日志的配置
 	protected static $defaultConfig = [
@@ -26,12 +24,12 @@ class Logger {
 		'delayThreshold' => 100, // log buffer threshold
 		// 用于输出日志的附加信息   ---start
 		'extra' => [
-			'REQUEST_URI'    => 'A',
-			'REMOTE_ADDR'    => 'B',
-			'REQUEST_METHOD' => 'C',
-			'HTTP_REFERER'   => 'D',
-			'SERVER_NAME'    => 'F',
-			'UNIQUE_ID'      => 'G',
+			'REQUEST_URI'    => 'A', // 请求的地址
+			'REMOTE_ADDR'    => 'B', // request ip, 如果要获取用户真实ip，需要重新获取
+			'REQUEST_METHOD' => 'C', // 请求的方法，get or post ?
+			'HTTP_REFERER'   => 'D', // 请求的referer
+			'SERVER_NAME'    => 'E', // 请求的host
+			'UNIQUE_ID'      => 'G', // 请求的唯一的ID，可用于链路追踪
 		],
 		// 用户输出日志的附加信息 ---start
 	];
@@ -53,25 +51,6 @@ class Logger {
 			self::$logConfig = $logConfig + self::$defaultConfig;
 		}
 	}
-
-	/**
-	 * @return LineFormatter
-	 */
-	protected static function getLineFormatter() {
-		if (self::$lineFormatter !== null) {
-			return self::$lineFormatter;
-		}
-		// the default date format is "Y-m-d H:i:s", output the date with microseconds.
-		$dateFormat = "Y-m-d H:i:s.u";
-		// the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
-		// $output = "%datetime% > %level_name% > %message% %context% %extra%" . PHP_EOL;
-		$curUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '-';
-		$output = "%datetime% > URI:[{$curUri}] %level_name% > %message% %context%" . PHP_EOL;
-		// finally, create a formatter
-		self::$lineFormatter = new LineFormatter($output, $dateFormat);
-		return self::$lineFormatter;
-	}
-
 
 	protected static function getJsonFormatter() {
 		if (self::$jsonFormatter !== null) {

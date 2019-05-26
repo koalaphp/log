@@ -63,7 +63,7 @@ class StreamHandler extends AbstractProcessingHandler
         } elseif (is_string($stream)) {
             $this->url = $stream;
         } else {
-            throw new \InvalidArgumentException('A stream must either be a resource or a string.');
+            throw new LogException('A stream must either be a resource or a string.', ErrorCode::INVALID_PARAM);
         }
 
         $filePath = dirname($this->url);
@@ -71,11 +71,11 @@ class StreamHandler extends AbstractProcessingHandler
 			$filePath = rtrim($filePath, DIRECTORY_SEPARATOR);
 			$result = mkdir($filePath, 0755, true);
 			if (!$result) {
-				throw new \RuntimeException(sprintf('unable to create directory: [%s]', $filePath));
+				throw new LogException(sprintf('unable to create directory: [%s]', $filePath), ErrorCode::WRITE_FILE_PERMISSION_ERROR);
 			}
 		}
 		if (!is_writable($filePath)) {
-			throw new \RuntimeException(sprintf('directory: [%s] is not writable, please check permission.', $this->url));
+			throw new LogException(sprintf('directory: [%s] is not writable, please check permission.', $this->url), ErrorCode::WRITE_FILE_PERMISSION_ERROR);
 		}
 
 		$this->delayThreshold = $delayThreshold;
@@ -113,6 +113,10 @@ class StreamHandler extends AbstractProcessingHandler
 			return false;
 		}
 
+		// 只显示当前的时间格式，把时区信息去掉了
+		if (isset($record["datetime"]) && is_object($record["datetime"]) && $record["datetime"] instanceof \DateTime) {
+			$record["datetime"] = $record["datetime"]->format("Y-m-d H:i:s.u");
+		}
 		$record = $this->processRecord($record);
 
 		$record['formatted'] = $this->getFormatter()->format($record);
@@ -147,7 +151,6 @@ class StreamHandler extends AbstractProcessingHandler
 		$this->logBufferCount++;
 		$this->logLineCount++;
 		$this->logBuffers[] = (string) $record['formatted'];
-		$curUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '-';
 		if ($this->logBufferCount == $this->delayThreshold) {
 			$this->realWriteToFile(implode("", $this->logBuffers));
 			// reset log buffer
@@ -155,9 +158,6 @@ class StreamHandler extends AbstractProcessingHandler
 			$this->logBufferCount = 0;
 		}
     }
-
-
-
 
     /**
      * Write to stream
@@ -173,7 +173,7 @@ class StreamHandler extends AbstractProcessingHandler
 	 * write log content into file
 	 *
 	 * @param string $logContent
-	 * @throws \RuntimeException
+	 * @throws LogException
 	 * @return null
 	 */
 	public function realWriteToFile($logContent)
@@ -182,7 +182,7 @@ class StreamHandler extends AbstractProcessingHandler
 		$fileHandle = fopen($this->url, 'a');
 		flock($fileHandle, LOCK_EX);
 		if (fwrite($fileHandle, $logContent) === false) {
-			throw new \RuntimeException(sprintf('directory: [%s] is not writable, please check permission.', $this->url));
+			throw new LogException(sprintf('directory: [%s] is not writable, please check permission.', $this->url), ErrorCode::WRITE_FILE_PERMISSION_ERROR);
 		}
 		fflush($fileHandle);
 		flock($fileHandle, LOCK_UN);

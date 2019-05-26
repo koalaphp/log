@@ -9,4 +9,5 @@ namespace Koala\Log;
 
 class ErrorCode {
 	const INVALID_PARAM = 10010;
+	const WRITE_FILE_PERMISSION_ERROR = 10011;
 }
