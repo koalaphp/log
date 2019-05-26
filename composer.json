@@ -1,5 +1,5 @@
 {
-  "name": "koala/log",
+  "name": "koalaphp/log",
   "description": "based on monolog, save log to files with high performance",
   "keywords": ["log", "logging", "psr-4", "files"],
   "homepage": "https://my.oschina.net/laiconglin/blog",
