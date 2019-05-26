@@ -8,10 +8,10 @@ KoalaPHP 基于 monolog 写入本地文件的json格式日志的组件
 建议在Bootstrap的时候初始化一次
 
 ```
-define('LOG_PATH', './logs/')
+define('LOG_PATH', './logs')
 $logConfig = [
     'level' => \Monolog\Logger::INFO,
-    'logPath' =>  "./logs/",
+    'logPath' =>  LOG_PATH,
     'logFileExtension' => '.log',
     'delayThreshold' => 100, // log buffer threshold
     // 用于输出日志的附加信息   ---start

@@ -13,7 +13,7 @@ class LoggerTest extends PHPUnit_Framework_TestCase
 	public function testLogger() {
 		$logConfig = [
 			'level' => \Monolog\Logger::INFO,
-			'logPath' =>  "./logs/",
+			'logPath' =>  "./logs",
 			'logFileExtension' => '.log',
 			'delayThreshold' => 100, // log buffer threshold
 			// 用于输出日志的附加信息   ---start

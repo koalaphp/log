@@ -19,7 +19,7 @@ class Logger {
 	// 默认的日志的配置
 	protected static $defaultConfig = [
 		'level' => \Monolog\Logger::INFO,
-		'logPath' =>  "/tmp/logs/",
+		'logPath' =>  "/tmp/logs",
 		'logFileExtension' => '.log',
 		'delayThreshold' => 100, // log buffer threshold
 		// 用于输出日志的附加信息   ---start
@@ -85,7 +85,7 @@ class Logger {
 		$processor = new \Monolog\Processor\WebProcessor($server);
 
 		// Create some handlers
-		$logFilePath = sprintf("%s%s-%s%s", self::$logConfig['logPath'] , $loggerName, date("Y-m-d"), self::$logConfig['logFileExtension']);
+		$logFilePath = sprintf("%s/%s-%s%s", rtrim(self::$logConfig['logPath'], '/'), $loggerName, date("Y-m-d"), self::$logConfig['logFileExtension']);
 
 		$logLevel = self::$logConfig['level'];
 		$delayThreshold = intval(self::$logConfig['delayThreshold']);
