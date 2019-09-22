@@ -25,14 +25,14 @@ $logConfig = [
     ],
     // 用户输出日志的附加信息 ---start
 ];
-Koala\Log\Logger::initLogConfig($logConfig);
+Koala\Log\MyLogger::initLogConfig($logConfig);
 
 ```
 
 ### 1.2 日志对象的获取和使用
 
 ```
-$apiLogger = Koala\Log\Logger::getLogger("api");
+$apiLogger = Koala\Log\MyLogger::getLogger("api");
 $apiLogger->info("test log", ["target_id" => "123456"]);
 ```
 

@@ -7,7 +7,7 @@
  */
 namespace Koala\Log;
 
-class Logger {
+class MyLogger {
 	protected static $loggerMap = [];
 
 	protected static $logConfig = [];

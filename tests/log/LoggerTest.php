@@ -6,7 +6,7 @@
  * Time: 00:01
  */
 
-use Koala\Log\Logger;
+use Koala\Log\MyLogger;
 
 class LoggerTest extends PHPUnit_Framework_TestCase
 {
@@ -27,8 +27,8 @@ class LoggerTest extends PHPUnit_Framework_TestCase
 			],
 			// 用户输出日志的附加信息 ---start
 		];
-		Logger::initLogConfig($logConfig);
-		$apiLogger = Logger::getLogger("api");
+		MyLogger::initLogConfig($logConfig);
+		$apiLogger = MyLogger::getLogger("api");
 		$apiLogger->info("test log", ["target_id" => "123456"]);
 		$this->assertTrue(true);
 	}
